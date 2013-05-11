@@ -31,7 +31,7 @@ set(CONFIG_ADD_OPTIONS "--includedir=${CMAKE_BINARY_DIR}/include/security")
 			OUTPUT BUILD_LIBPAM
 			# get source
 			#COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf -
-			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE} || wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
+			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE} || wget https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} -O ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
 			COMMAND tar -xjvf ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
 			# configure: not support outside config
 			COMMAND cd ${TOOL_LIBPAM_DIR} && CFLAGS="${SELF_CFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" LDFLAGS="${SELF_LDFLAGS}" ./configure --host="${target_platform}" --prefix=${CMAKE_BINARY_DIR} ${CONFIG_ADD_OPTIONS} 
@@ -45,7 +45,7 @@ set(CONFIG_ADD_OPTIONS "--includedir=${CMAKE_BINARY_DIR}/include/security")
 			OUTPUT BUILD_LIBPAM
 			# get source
 			#COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf - 
-			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE} || wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
+			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE} || wget https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} -O ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
 			COMMAND tar -xjvf ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
 			# configure
 			COMMAND cd ${TOOL_LIBPAM_DIR} && ./configure --prefix=${CMAKE_BINARY_DIR} LDFLAGS="${SELF_LDFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" ${CONFIG_ADD_OPTIONS}
