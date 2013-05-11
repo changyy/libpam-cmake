@@ -33,15 +33,25 @@ set(CONFIG_ADD_OPTIONS "--includedir=${CMAKE_BINARY_DIR}/include/security")
 	if(DEFINED CMAKE_TOOLCHAIN_FILE)
 		add_custom_command(
 			OUTPUT BUILD_LIBPAM
-			COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf - && cd ${CMAKE_BINARY_DIR}/${TOOL_LIBPAM_DIR} && CFLAGS="${SELF_CFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" LDFLAGS="${SELF_LDFLAGS}" ./configure --host="${target_platform}" --prefix=${CMAKE_BINARY_DIR} ${CONFIG_ADD_OPTIONS} && make -j2 && make install
-			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+			# get source
+			COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf -
+			# configure: not support outside config
+			COMMAND cd ${TOOL_LIBPAM_DIR} && CFLAGS="${SELF_CFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" LDFLAGS="${SELF_LDFLAGS}" ./configure --host="${target_platform}" --prefix=${CMAKE_BINARY_DIR} ${CONFIG_ADD_OPTIONS} 
+			# build
+			COMMAND cd ${TOOL_LIBPAM_DIR} && make -j4 && make install
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT "Build libpam"
 		)
 	else(DEFINED CMAKE_TOOLCHAIN_FILE)
 		add_custom_command(
 			OUTPUT BUILD_LIBPAM
-			COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf - && cd ${CMAKE_BINARY_DIR}/${TOOL_LIBPAM_DIR} && ./configure --prefix=${CMAKE_BINARY_DIR} LDFLAGS="${SELF_LDFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" ${CONFIG_ADD_OPTIONS} && make -j2 && make install 
-			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+			# get source
+			COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf - 
+			# configure
+			COMMAND ${TOOL_LIBPAM_DIR}/configure --prefix=${CMAKE_BINARY_DIR} LDFLAGS="${SELF_LDFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" ${CONFIG_ADD_OPTIONS}
+			# build
+			COMMAND make -j4 && make install 
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT "Build libpam" 
 		)
 	endif(DEFINED CMAKE_TOOLCHAIN_FILE)
