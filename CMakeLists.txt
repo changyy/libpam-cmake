@@ -10,10 +10,6 @@ if (DEFINED CMAKE_TOOLCHAIN_FILE)
 	set(target_platform_preconfigure_options "CC=${target_platform}-gcc;AR=${target_platform}-ar;LD=${target_platform}-ld;RANLIB=${target_platform}-ranlib;NM=${target_platform}-nm;AS=${target_platform}-as;OBJDUMP=${target_platform}-objdump;OBJCOPY=${target_platform}-objcopy;STRIP=${target_platform}-strip;STRINGS=${target_platform}-strings;SIZE=${target_platform}-size")
 endif(DEFINED CMAKE_TOOLCHAIN_FILE)
 
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
 set(SELF_CPPFLAGS "")
 set(SELF_CFLAGS "")
 set(SELF_LDFLAGS "")
@@ -34,7 +30,9 @@ set(CONFIG_ADD_OPTIONS "--includedir=${CMAKE_BINARY_DIR}/include/security")
 		add_custom_command(
 			OUTPUT BUILD_LIBPAM
 			# get source
-			COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf -
+			#COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf -
+			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE} || wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
+			COMMAND tar -xjvf ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
 			# configure: not support outside config
 			COMMAND cd ${TOOL_LIBPAM_DIR} && CFLAGS="${SELF_CFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" LDFLAGS="${SELF_LDFLAGS}" ./configure --host="${target_platform}" --prefix=${CMAKE_BINARY_DIR} ${CONFIG_ADD_OPTIONS} 
 			# build
@@ -46,11 +44,13 @@ set(CONFIG_ADD_OPTIONS "--includedir=${CMAKE_BINARY_DIR}/include/security")
 		add_custom_command(
 			OUTPUT BUILD_LIBPAM
 			# get source
-			COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf - 
+			#COMMAND wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} | tar -xjvf - 
+			COMMAND test -e ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE} || wget -qO- https://fedorahosted.org/releases/l/i/linux-pam/${TOOL_LIBPAM_SOURCE} > ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
+			COMMAND tar -xjvf ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL_LIBPAM_SOURCE}
 			# configure
-			COMMAND ${TOOL_LIBPAM_DIR}/configure --prefix=${CMAKE_BINARY_DIR} LDFLAGS="${SELF_LDFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" ${CONFIG_ADD_OPTIONS}
+			COMMAND cd ${TOOL_LIBPAM_DIR} && ./configure --prefix=${CMAKE_BINARY_DIR} LDFLAGS="${SELF_LDFLAGS}" CPPFLAGS="${SELF_CPPFLAGS}" ${CONFIG_ADD_OPTIONS}
 			# build
-			COMMAND make -j4 && make install 
+			COMMAND cd ${TOOL_LIBPAM_DIR} && make -j4 && make install 
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT "Build libpam" 
 		)
